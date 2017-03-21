@@ -1,0 +1,28 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "AvComm"
+        },
+        "cordova-plugin-media-capture": {
+            "PACKAGE_NAME": "AvComm"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "AvComm"
+        }
+    },
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "AvComm"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "AvComm"
+        }
+    }
+}
