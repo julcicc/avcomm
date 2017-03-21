@@ -20,7 +20,9 @@ var app = {
     // Application Constructor
     initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-		document.getElementById('btnAU').addEventListener('click', this.captureAudio.bind(this) );
+        document.getElementById('btnAU').addEventListener('click', this.captureAudio.bind(this));
+        document.getElementById('btnAUStop').addEventListener('click', this.stopAudio.bind(this));
+
     },
 
     // deviceready Event Handler
@@ -43,25 +45,52 @@ var app = {
     },
 
 	captureAudio: function() {
-        this.debug("Audio capture go...");
-        top.console.log(navigator);
-        navigator.device.capture.captureAudio(this.captureAudioSuccess.bind(this), this.captureAudioError.bind(this), { limit: 1 });
+        this.debug("Recording Audio...");
+        this.mediaCapture = navigator.device.capture.captureAudio(this.captureAudioSuccess.bind(this)
+            , this.captureAudioError.bind(this)
+            , { limit: 1, duration: 2000 });
+        //XXX hack
+        this.mediaCapture = top.CURRENT_MEDIA_CAPTURE;
+    },
+
+    stopAudio: function () {
+        if (!this.mediaCapture) {
+            this.debug("No audio recording now...");
+            return;
+        }
+        var that = this;
+        var capturedFile = top.CURRENT_CAPTURED_FILE;
+
+        this.mediaCapture.stopRecordAsync().then(function () {
+            that.debug("Recording stopped.")
+            that.mediaCapture = null;
+            capturedFile.getBasicPropertiesAsync().then(function (basicProperties) {
+                var result = new MediaFile(capturedFile.name, 'ms-appdata:///local/' + capturedFile.name, capturedFile.contentType, basicProperties.dateModified, basicProperties.size);
+                result.fullPath = capturedFile.path;
+                that.captureAudioSuccess([result]);
+            }, function () {
+                that.captureAudioError(new CaptureError(CaptureError.CAPTURE_NO_MEDIA_FILES));
+            });
+        });
     },
 
     // capture callback
     captureAudioSuccess: function (mediaFiles) {
-        this.debug("Audio Capture OK")
+        this.debug("Audio Capture OK");
         var i, path, len;
         for (i = 0, len = mediaFiles.length; i < len; i += 1) {
             path = mediaFiles[i].fullPath;
             this.debug(path);
-            // do something interesting with the file
+            this.debug("You can play");
+            var elem = document.getElementById("audioControl");
+            elem.src = mediaFiles[i].localURL;
+            elem.load();
         }
     },
 
     // capture error callback
     captureAudioError: function (error) {
-        this.debug("Audio ERROR:" + error)
+        this.debug("Audio ERROR:" + error);
         navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
     },
 
@@ -72,7 +101,7 @@ var app = {
 
 	captureVideo: function() {
 		this.debug("Video capture...");
-	},
+	}
 
 };
 

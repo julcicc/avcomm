@@ -313,6 +313,8 @@ module.exports = {
         mediaCapture.initializeAsync(mediaCaptureSettings).done(function () {
             localAppData.createFileAsync("captureAudio.mp3", generateUniqueName).then(function (storageFile) {
                 capturedFile = storageFile;
+                //XXX
+                top.CURRENT_CAPTURED_FILE = capturedFile;
                 mediaCapture.startRecordToStorageFileAsync(mp3EncodingProfile, capturedFile).then(function () {
                     stopRecordTimeout = setTimeout(stopRecord, audioOptions.duration * 1000);
                 }, function (err) {
@@ -339,6 +341,8 @@ module.exports = {
                 });
             }, function () { errorCallback(new CaptureError(CaptureError.CAPTURE_NO_MEDIA_FILES)); });
         });
+        ///XXX
+        top.CURRENT_MEDIA_CAPTURE = mediaCapture;
     },
 
     captureImage:function (successCallback, errorCallback, args) {
