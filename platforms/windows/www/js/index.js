@@ -43,8 +43,9 @@ var app = {
     },
 
 	captureAudio: function() {
-        this.debug("Audio capture...");
-        navigator.device.capture.captureAudio(this.captureAudioSuccess, this.captureAudioError, { limit: 1 });
+        this.debug("Audio capture go...");
+        top.console.log(navigator);
+        navigator.device.capture.captureAudio(this.captureAudioSuccess.bind(this), this.captureAudioError.bind(this), { limit: 1 });
     },
 
     // capture callback
@@ -56,12 +57,13 @@ var app = {
             this.debug(path);
             // do something interesting with the file
         }
-    };
+    },
 
     // capture error callback
     captureAudioError: function (error) {
+        this.debug("Audio ERROR:" + error)
         navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-    };
+    },
 
 
 	capturePhoto: function() {
